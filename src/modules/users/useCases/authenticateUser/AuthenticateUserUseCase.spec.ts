@@ -24,8 +24,10 @@ describe("Authenticate user", () => {
     };
 
     const hashPassword = await hash(userData.password, 8);
-
-    inMemoryUsersRepository.create({ ...userData, password: hashPassword });
+    await inMemoryUsersRepository.create({
+      ...userData,
+      password: hashPassword,
+    });
   });
 
   it("Should be able authenticate user", async () => {
