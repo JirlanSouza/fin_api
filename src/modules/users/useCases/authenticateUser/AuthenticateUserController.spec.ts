@@ -14,13 +14,14 @@ describe("Authenticate user controller", () => {
 
     const passwordHash = await hash("newuser", 8);
 
+    await connection.query(`DELETE FROM USERS`);
     await connection.query(`INSERT INTO USERS(id, name, email, password)
       values('${uuidV4()}', 'new user', 'newuser@finapi.com', '${passwordHash}')
     `);
   });
 
   afterAll(async () => {
-    connection.query(`DELETE FROM USERS`);
+    await connection.query(`DELETE FROM USERS`);
     await connection.close();
   });
 
