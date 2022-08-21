@@ -1,3 +1,7 @@
-import { app } from './app';
+import { app } from "./app";
+import { DbConnection } from "./database";
 
-app.listen(3333, () => { console.log('Server is running') });
+DbConnection.create();
+app.listen(3333, () => {
+  console.log("Server is running");
+});

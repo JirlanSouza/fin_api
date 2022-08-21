@@ -1,11 +1,11 @@
 import { hash } from "bcryptjs";
 import request from "supertest";
 import { v4 as uuidV4 } from "uuid";
-import { Connection, createConnection } from "typeorm";
+
 import { app } from "../../../../app";
+import { DbConnection } from "../../../../database";
 
 describe("Show user profile controller", () => {
-  let connection: Connection;
   let userId = uuidV4();
   const userData = {
     email: "newuser@finapi.com",
@@ -13,23 +13,25 @@ describe("Show user profile controller", () => {
   };
 
   beforeAll(async () => {
-    connection = await createConnection();
-    await connection.runMigrations();
+    await DbConnection.create();
+  });
 
-    const passwordHash = await hash(userData.password, 8);
-
-    await connection.query(`DELETE FROM USERS`);
-    await connection.query(`INSERT INTO USERS(id, name, email, password)
-      values('${userId}', 'new user', '${userData.email}', '${passwordHash}')
-    `);
+  beforeEach(async () => {
+    await DbConnection.clear();
   });
 
   afterAll(async () => {
-    await connection.query(`DELETE FROM USERS`);
-    await connection.close();
+    await DbConnection.close();
   });
 
   it("Should be able show user profile", async () => {
+    const passwordHash = await hash(userData.password, 8);
+
+    await DbConnection.connection
+      .query(`INSERT INTO USERS(id, name, email, password)
+      values('${userId}', 'new user', '${userData.email}', '${passwordHash}')
+    `);
+
     const authenticateResponse = await request(app)
       .post("/api/v1/sessions")
       .send(userData);

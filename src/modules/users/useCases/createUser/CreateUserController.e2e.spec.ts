@@ -1,24 +1,22 @@
 import request from "supertest";
-import { Connection, createConnection } from "typeorm";
 
 import { app } from "../../../../app";
+import { DbConnection } from "../../../../database";
 
 describe("Create user controller", () => {
-  let connection: Connection;
-
   beforeAll(async () => {
-    connection = await createConnection();
-    await connection.runMigrations();
+    await DbConnection.create();
+  });
+
+  afterEach(async () => {
+    await DbConnection.clear();
   });
 
   afterAll(async () => {
-    await connection.query(`DELETE FROM USERS`);
-    await connection.close();
+    await DbConnection.close();
   });
 
   it("Should be able create a new user", async () => {
-    await connection.query(`DELETE FROM USERS`);
-
     const userData = {
       name: "new user",
       email: "newuser@finapi.com",

@@ -3,12 +3,11 @@
  * https://jestjs.io/docs/configuration
  */
 
-const config = {
+export default {
   bail: 1,
   clearMocks: true,
   coverageProvider: "v8",
+  testEnvironment: "node",
   preset: "ts-jest",
   testMatch: ["**/*.spec.ts"],
 };
-
-module.exports = config;
